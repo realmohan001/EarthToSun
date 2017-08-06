@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    version="2.5">
+ 
+ <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+ 
+   <!--
+   REMOVED SPRING MOBILE
+     <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+		        <url-pattern>/m/*</url-pattern>    	
+				<url-pattern>/t/*</url-pattern>				  
+				<url-pattern>/</url-pattern>
+    </servlet-mapping> -->
+
+ 	<servlet-mapping>
+ 				<servlet-name>dispatcher</servlet-name>		        
+				<url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+
+   
+	<session-config>
+        <session-timeout>15</session-timeout> 
+     </session-config>
+     
+ 
+ 
+ <!--
+      - Location of the XML file that defines the root application context
+      - Applied by ContextLoaderListener.
+      -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/dispatcher-servlet.xml,
+			/WEB-INF/dispatcher-security.xml
+        </param-value>
+    </context-param>
+    
+     <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+      <filter-name>springSecurityFilterChain</filter-name>
+      <url-pattern>/*</url-pattern>
+      <dispatcher>REQUEST</dispatcher>
+   	  <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <!--
+      - Loads the root application context of this web app at startup.
+    -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    
+     <!--
+      - Publishes events for session creation and destruction through the application
+      - context. Optional unless concurrent session control is being used.
+      -->
+    <listener>
+      <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+    
+    
+   <!-- Default mapping for css and js folders  -->
+    
+       <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+       </servlet>
+    
+	<servlet-mapping>
+    	<servlet-name>default</servlet-name>
+    	<url-pattern>/css/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+    	<servlet-name>default</servlet-name>
+    	<url-pattern>/js/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+    	<servlet-name>default</servlet-name>
+    	<url-pattern>/img/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+    	<servlet-name>default</servlet-name>
+    	<url-pattern>/fonts/*</url-pattern>
+	</servlet-mapping>	
+	<!-- 
+	
+	REMOVED SPRING MOBILE
+	
+	<servlet-mapping>
+    	<servlet-name>default</servlet-name>
+    	<url-pattern>/m/ModifyCustomerItemGet/img/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+    	<servlet-name>default</servlet-name>
+    	<url-pattern>/t/ModifyCustomerItemGet/img/*</url-pattern>
+	</servlet-mapping>			 -->
+	
+</web-app>

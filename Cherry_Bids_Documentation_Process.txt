@@ -1,0 +1,72 @@
+Login process
+
+1) When submitted to this form command action "/j_spring_security_check"
+
+				<form-login login-page="/LoginCustomer.htm" authentication-failure-url="/LoginCustomer.htm?error=true"
+							login-processing-url="/j_spring_security_check" default-target-url='/LoginSuccess' always-use-default-target="true"/>
+					<logout invalidate-session="true" logout-success-url="/LoginCustomer.htm" />
+					
+					<!--  <session-management invalid-session-url="/LoginCustomer.htm" />    -->  
+					<session-management invalid-session-url="/" />
+					
+					
+					
+				<!-- Declare an authentication-manager to use a custom userDetailsService -->
+				<authentication-manager>
+						<authentication-provider user-service-ref="customUserDetailsService">
+								<password-encoder ref="passwordEncoder"/>
+						</authentication-provider>
+				</authentication-manager>
+
+				<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the database -->
+				<beans:bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" id="passwordEncoder"/>
+
+				<!-- A custom service where Spring will retrieve users and their corresponding access levels  -->
+				<beans:bean id="customUserDetailsService" class="com.rendevous.intention.trick.spring.service.CustomUserDetailsService"/>
+					
+					
+					
+					
+					
+2) Request goes to customUserDetailsService.loadUserByUsername(username) method,
+ in this method you will create the user object of type "UserDetails" sub class is "CustomUserImplementation".
+ 
+ You will retrieve the user object from database and then you will create the UserDetails object, with the password from database, Spring will then take this UserDetails object and 
+ verifies that passowrd with the passowrd user entered.
+ 
+ You also need to provide the password encoder.
+ 
+3) From here, the request goes to the "default-target-url='/LoginSuccess'" mapped controller method.
+
+4) In the mapped "default-target-url='/LoginSuccess'" controller method, you can acccess the user object of type "CustomUserImplementation" and set it to the user session(userSessionScopedData).
+
+
+5) Security access level
+
+/**
+	 * Retrieves the correct ROLE type depending on the access level, where access level is an Integer.
+	 * Basically, this interprets the access value whether it's for a regular user or admin.
+	 * 
+	 * @param access an integer value representing the access of the user
+	 * @return collection of granted authorities
+	 * 
+	 * 1 --- ADMIN
+	 * 2 --- BUSINESS
+	 * 3 --- USER
+	 * 4 --- NONACTIVE
+	 */
+	 
+	 
+	 
+Item status codes
+
+1) New auction added, ITEM status code is--------> 100
+2) Auction time ended, no bid place. ITEM status code is --------> 150
+2) Customer informed about winning bid, but payment card is not changed. ITEM status code is -------> 200
+3) Customer payment card is charged, payment is unsuccessful. ITEM status code is -------> 250
+4) Customer payment card is charged, payment is successful. ITEM status code is -------> 300
+
+
+
+
+	 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Template for HTML email (simple)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body bgcolor="#E6E6FA">
+        <p th:text="${customerName}">
+            Hello, Peter Static!
+        </p>
+        
+         <p>       
+       		Congratulations, Your bid for <b><span th:text="${itemName}"> </span></b> won!. Winning Bid price is <b><span th:text="${winningBidValue}"> </span></b>. We will ship your item once your card is charged. 
+         </p>
+         
+          <p>       
+       		You will get a follow up E-mail with the billing and shipping details. 
+          </p>
+         
+        <p>
+            Regards, <br />
+            &emsp; <em>Cherry Sports Bids Admin</em>
+        </p>
+    </body>
+</html>

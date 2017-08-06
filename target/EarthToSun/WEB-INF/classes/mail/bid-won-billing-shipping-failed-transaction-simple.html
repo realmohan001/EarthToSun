@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Template for HTML email (simple)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body bgcolor="#E6E6FA">
+    
+    
+   		 <p th:text="${customerName}">
+            Hello, Peter Static!
+        </p>
+        
+         <p>       
+       		Congratulations, Your bid for <b><span th:text="${itemName}"> </span></b> won!. Winning Bid price is <b><span th:text="${winningBidValue}"> </span></b>. Payment transaction on the below card failed. Call the customer service to provide the new payment details. Please verify the details on the account below.
+         </p>
+         
+          <p>       
+       		<b>Billing Address on the account</b>
+          </p>
+          
+          	
+	            <pre th:text="${billingAddress}">
+	           		Billing Address on account
+	      		</pre>
+      		
+      		<p>       
+       			<b>Shipping Address on the account</b>
+          	</p>
+          
+            
+	            <pre th:text="${shippingAddress}">
+	           		Shipping Address on account
+	      		</pre>
+      		
+      		
+      		<p> 
+      			Payment card on the account is card ending with number <b><span th:text="${paymentCardDetails}"> </span> </b>. Please call Cherry Sports Bids Customer service in case of any questions! 
+      		</p> 
+         
+       		 <p>
+         		   Regards, <br />
+         		   &emsp; <em>Cherry Sports Bids Admin</em>
+        	</p>
+    </body>
+</html>

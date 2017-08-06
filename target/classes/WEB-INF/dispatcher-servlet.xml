@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" 
+xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx" 
+xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task" 
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util		
+        http://www.springframework.org/schema/util/spring-util-4.3.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-4.3.xsd">
+        
+	<context:component-scan base-package="com.rendevous.intention.trick.spring" />
+
+	
+	<task:executor id="threadPoolTaskExecutor" pool-size="5" />  
+  	<task:annotation-driven executor="threadPoolTaskExecutor" />
+	
+	<context:annotation-config />
+	  
+	<!-- 
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			<bean class="org.springframework.mobile.device.site.SitePreferenceWebArgumentResolver" /> 			
+			<bean class="org.springframework.mobile.device.DeviceWebArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+	 
+	<mvc:interceptors>
+		
+		<bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor" />
+	
+		
+		<bean class="org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor" />
+	
+		
+		<bean class="org.springframework.mobile.device.switcher.SiteSwitcherHandlerInterceptor" factory-method="urlPath">
+			<constructor-arg value="/m" />
+			<constructor-arg value="/t" />
+			<constructor-arg value="" />
+		</bean>
+	</mvc:interceptors>
+	
+	
+	<bean id="liteDeviceDelegatingViewResolver" class="org.springframework.mobile.device.view.LiteDeviceDelegatingViewResolver">
+		<constructor-arg>
+			<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<property name="prefix" value="/WEB-INF/pages/" />
+				<property name="suffix" value=".jsp" />
+			</bean>
+		</constructor-arg>
+	
+		<property name="mobilePrefix" value="m/" />
+		<property name="tabletPrefix" value="t/" />
+		<property name="enableFallback" value="true" />		
+	</bean>
+	
+	-->
+	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" value="/WEB-INF/pages/" />
+			<property name="suffix" value=".jsp" />
+	</bean>	
+	
+	
+	<bean class="com.rendevous.intention.trick.spring.validator.RegisterCustomerValidator" />
+	<bean class="com.rendevous.intention.trick.spring.validator.LoginCustomerValidator" />
+	<bean class="com.rendevous.intention.trick.spring.validator.ForgotPasswordValidator" />
+	<bean class="com.rendevous.intention.trick.spring.validator.ItemManagerValidator" />
+	
+ 
+ 
+ 	<!-- Register the Customer.properties -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="com/rendevous/intention/trick/spring/Customer" />
+	</bean>
+	
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation">
+            <value>classpath:hibernate.cfg.xml</value>
+        </property>       
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${jdbc.dialect}</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.connection.SetBigStringTryClob">true</prop>
+                <prop key="hibernate.jdbc.batch_size">0</prop>
+            </props>
+        </property>
+    </bean>
+    
+    
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" p:location="/WEB-INF/earthToSunKeyValue.properties" />
+    
+ 
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"
+        p:driverClassName="${jdbc.driverClassName}"
+        p:url="${jdbc.databaseurl}" p:username="${jdbc.username}"
+        p:password="${jdbc.password}" />
+        
+        
+   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="10000000" />
+    </bean>
+   
+   <mvc:annotation-driven/>  
+   <tx:annotation-driven/>        
+        
+   <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    <!-- SPRING MVC ERROR SUPPORT -->
+    
+     <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.Exception">error</prop>
+			</props>
+		</property>
+	</bean>
+    
+    
+    
+    <!-- Email support -->
+    
+    
+         <!-- Read configuration properties 
+    <context:property-placeholder location="classpath:emailconfiguration.properties"/> -->
+
+
+    <!-- Message externalization/internationalization -->
+    <bean id="messageSource1" class="org.springframework.context.support.ResourceBundleMessageSource">
+      <property name="basename" value="Messages" />
+    </bean>
+    
+    
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.server.host}" />
+        <property name="port" value="${mail.server.port}" />
+        <property name="protocol" value="${mail.server.protocol}" />
+        <property name="username" value="${mail.server.username}" />
+        <property name="password" value="${mail.server.password}" />
+        <property name="javaMailProperties">
+            <util:properties location="classpath:javamail.properties" />
+        </property>
+    </bean>
+    
+    <!-- THYMELEAF: Template Engine (Spring3-specific version) -->
+   <bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolvers">
+          <set>
+            <ref bean="emailTemplateResolver" />            
+          </set>
+        </property>
+    </bean> 
+    
+ 
+    
+    
+    
+     <!-- THYMELEAF: Template Resolver for email templates -->
+    <bean id="emailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="mail/" />
+        <property name="templateMode" value="HTML5" />
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="order" value="1" />
+        <!-- Template cache is true by default. Set to false if you want -->
+        <!-- templates to be automatically updated when modified.        -->
+        <property name="cacheable" value="true" />
+    </bean>
+    
+    
+ 
+    
+    
+
+</beans>

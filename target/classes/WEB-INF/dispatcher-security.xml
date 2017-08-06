@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+xmlns:beans="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+ 
+	<!-- This is where we configure Spring-Security  -->
+	
+	<http pattern="/css/**" security="none"/>
+	<http pattern="/img/**" security="none"/>
+	<http pattern="/js/**" security="none"/>
+	
+	<http pattern="/" security="none"/>
+	<http pattern="/LoginCustomer.htm**" security="none"/>  
+	<http pattern="/RegisterCustomer.htm**" security="none"/>
+	<http pattern="/RegisterBusinessCustomer**" security="none"/>
+	<http pattern="/RegisterUserCustomer**" security="none"/>
+	<http pattern="/CustomerLogOut.htm**" security="none"/>
+	
+	
+	<http pattern="/index**" security="none"/>	
+	<http pattern="/denied**" security="none"/>
+	<http pattern="/error**" security="none"/>
+	
+	
+	
+	<http auto-config="true" create-session="always" access-denied-page="/denied.htm">
+	
+		<!-- <intercept-url pattern="/index/**" access="ROLE_ADMIN,ROLE_COMMON,ROLE_USER"/>
+		<intercept-url pattern="/LoginCustomer.htm**" access="ROLE_ADMIN,ROLE_COMMON,ROLE_USER"/>
+		<intercept-url pattern="/RegisterCustomer.htm**" access="ROLE_ADMIN,ROLE_COMMON,ROLE_USER"/> -->
+		<intercept-url pattern="/itemDetails/**" access="ROLE_ADMIN,ROLE_USER"/>
+		<intercept-url pattern="/ClosedItemsBids/**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		
+		<intercept-url pattern="/AccountInfo.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		<intercept-url pattern="/AddressDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		<intercept-url pattern="/PaymentDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		<intercept-url pattern="/UserIDDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		<intercept-url pattern="/PasswordDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		<intercept-url pattern="/EmailAddressDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		<intercept-url pattern="/AccountPreferencesDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		<intercept-url pattern="/fillBillingAndCardDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+		
+		
+		
+		
+		<intercept-url pattern="/AddressDetails.htm**" access="ROLE_ADMIN,ROLE_USER,ROLE_BUSINESS"/>
+				
+		<intercept-url pattern="/addItem**" access="ROLE_ADMIN,ROLE_BUSINESS"/>
+		<intercept-url pattern="/ModifyItems**" access="ROLE_ADMIN,ROLE_BUSINESS"/>
+		
+		<intercept-url pattern="/RegistrationActivationSuccess**" access="ROLE_ADMIN,ROLE_NONACTIVE"/>		
+		<intercept-url pattern="/itemBidClicked/**" access="ROLE_ADMIN,ROLE_USER"/>	
+		
+		<!-- 
+    	<intercept-url pattern="/app/passwordHint*" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER"/>
+    	<intercept-url pattern="/app/signup*" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER"/>
+    	<intercept-url pattern="/LoginCustomer.htm**" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER"/>
+	
+		<intercept-url pattern="/app/admin/**" access="ROLE_ADMIN"/>
+    	<intercept-url pattern="/app/passwordHint*" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER"/>
+    	<intercept-url pattern="/app/signup*" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER"/>
+    	<intercept-url pattern="/LoginCustomer.htm**" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER"/>
+    	<intercept-url pattern="/app/**" access="ROLE_ADMIN,ROLE_USER"/>
+    	<intercept-url pattern="/itemDetails*" access="ROLE_ADMIN"/>
+    	 -->    	
+    	<form-login login-page="/LoginCustomer.htm" authentication-failure-handler-ref="authenticationFailureHandler"
+                login-processing-url="/j_spring_security_check" default-target-url='/LoginSuccess'/>
+		<logout invalidate-session="true" logout-url="/sign-out" logout-success-url="/CustomerLogOut.htm" />
+		
+		<!--  <session-management invalid-session-url="/LoginCustomer.htm" />       
+		<session-management invalid-session-url="/" />   -->
+	</http>
+	
+	
+	<beans:bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+	    <beans:property name="exceptionMappings">
+	        <beans:props>
+	            <beans:prop key="org.springframework.security.authentication.BadCredentialsException">/LoginCustomer.htm?error=badCredentialsException</beans:prop>
+	            <beans:prop key="org.springframework.security.authentication.CredentialsExpiredException">/LoginCustomer.htm?error=credentialsExpiredException</beans:prop>
+	            <beans:prop key="org.springframework.security.authentication.LockedException">/LoginCustomer.htm?error=lockedException</beans:prop>
+	            <beans:prop key="org.springframework.security.authentication.DisabledException">/LoginCustomer.htm?error=disabledException</beans:prop>
+	            <beans:prop key="org.springframework.security.core.userdetails.UsernameNotFoundException">/LoginCustomer.htm?error=usernameNotFoundException</beans:prop>
+	            <beans:prop key="org.springframework.dao.DataAccessException">/LoginCustomer.htm?error=dataAccessException</beans:prop>
+	        </beans:props>
+	    </beans:property>
+    </beans:bean>
+	
+	<!-- Declare an authentication-manager to use a custom userDetailsService -->
+	<authentication-manager>
+	        <authentication-provider user-service-ref="customUserDetailsService">
+	        		<password-encoder ref="passwordEncoder"/>
+	        </authentication-provider>
+	</authentication-manager>
+
+	<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the database -->
+	<beans:bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" id="passwordEncoder"/>
+
+	<!-- A custom service where Spring will retrieve users and their corresponding access levels  -->
+	<beans:bean id="customUserDetailsService" class="com.rendevous.intention.trick.spring.service.CustomUserDetailsService"/>
+ 
+	
+ 
+</beans:beans>

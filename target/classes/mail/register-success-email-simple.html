@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Template for HTML email (simple)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body bgcolor="#E6E6FA">
+        <p th:text="${name}">
+            Hello, Cherry Sports Bids!
+        </p>
+        
+        <p>
+        	Your User ID is : <span th:text="${userID}"> </span>
+        </p>
+        
+        <p>       
+       		Please click the link below to verify the your registration with Cherrysportsbids. Your registration will not be complete until verified. You cannot start bidding until the link is verified.
+       </p>	
+
+		<p>
+		(or)
+		Copy and paste the below url into your browser:		
+		</p>
+
+		<p th:text="${verificationLink}">
+            http://www.cherrysportsbids.com
+        </p>
+       
+        <p>
+            Regards, <br />
+            &emsp; <em>Cherry Sports Bids Admin</em>
+        </p>
+    </body>
+</html>

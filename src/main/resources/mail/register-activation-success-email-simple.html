@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Template for HTML email (simple)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body bgcolor="#E6E6FA">
+        <p th:text="${name}">
+            Hello, Cherry Sports Bids!
+        </p>
+        
+        <p>       
+       		Your account activation is Successful! You can start placing bids now.
+       </p>      
+       
+       
+        <p>
+            Regards, <br />
+            &emsp; <em>Cherry Sports Bids Admin</em>
+        </p>
+    </body>
+</html>
